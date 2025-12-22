@@ -21,3 +21,5 @@
   _git branch xxxx_
 - #### 切換到新分支
   _git checkout xxx_
+- #### 刪除本地分支
+  _git branch -d xxx_
