@@ -28,12 +28,13 @@
     <!-- Skills Section -->
     <section id="skills" class="skills">
       <h2>技能</h2>
+      <p>技能數量{{ skills.length }}
+      </p>
+      <button class="btn" @click="addSkill">新增技能</button>
       <ul class="skill-list">
-        <li>HTML5 / CSS3</li>
-        <li>JavaScript</li>
-        <li>Vue.js / Nuxt.js</li>
-        <li>SCSS / SASS</li>
-        <li>Git</li>
+        <li v-for="(skill,index) in skills" :key="index">
+            <SkillCard :name="skill" @remove="removeSkill(index)"/>
+        </li>
       </ul>
     </section>
 
@@ -59,56 +60,13 @@
     <p>GitHub: github.com/CheeeYun</p>
   </footer>
 </template>
-<style>
-    .nav-links{
-    display: flex;
-    list-style: none;
-    gap:2rem;
+<script setup>
+const count = ref(0);
+const skills = reactive(['HTML5 / CSS3','JavaScript','Vue.js / Nuxt.js','SCSS / SASS','Git'])
+const addSkill = ()=>{
+    skills.push('SCSS')
 }
-.nav-links a{
-    color:white;
-    text-decoration: none;
+const removeSkill = (index)=>{
+    skills.splice(index,1)
 }
-.logo{
-    color: white;
-    text-decoration: none;
-}
-.hero{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height:100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    text-align: center;
-}
-
-.skill-list{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:1rem;
-    list-style:none;
-}
-.skill-list li{
-    padding: 0.5rem 1rem;
-    background-color: #3498db;
-    color:white;
-    border-radius:20px;
-}
-.project-grid{
-    display:flex;
-    flex-wrap:wrap;
-    gap:2rem;
-    justify-content:center;
-}
-.project-card{
-    flex: 1 1 500px;
-    max-width: 500px;
-    padding: 2rem;
-    background-color: #f8f9fa;
-    border-radius:10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-</style>
+</script>
