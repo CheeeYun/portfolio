@@ -63,6 +63,18 @@
         </div>
     </section>
     <section>
+
+        <ScopedSlotList :items="skills">
+            <template #default ="{item,index}">
+                {{ index }} : {{ item }}
+            </template>
+        </ScopedSlotList>
+        <SlotCard>
+            <template #header>自訂標題</template>
+            <template #content>自訂123</template>
+            <template #footer>1234</template>
+            <p>6666</p>
+        </SlotCard>
         <div v-if="loading">載入中...</div>
         <div v-else-if="error">錯誤:{{ error }}</div>
         <ul v-else>
@@ -91,14 +103,20 @@
 </template>
 
 <script setup>
+import SlotCard from '~/components/SlotCard.vue'
+
  const {count,increment,decrement,reset} = useCounter(10)
  const {data,loading,error,fetchData} = useApi()
 // const count2 = ref(0);
 
 const user = reactive({name:'Eric',age:30})
-
+const state = reactive({count:0})
 const nameRef = toRef(user,'name')
 const {name,age} = toRefs(user);
+
+const countRef = toRef(state,'count')
+
+
 
 const showCount = ref(false);
 const showModal = ref(false);
