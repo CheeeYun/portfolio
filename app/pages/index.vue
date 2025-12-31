@@ -28,8 +28,9 @@
     <!-- Skills Section -->
     <section id="skills" class="skills">
       <h2>技能</h2>
-      <p>技能數量{{ skills.length }}
+      <p>{{skillsSummary}}
       </p>
+      <input type="text" v-model="newSkills" placeholder="輸入新技能"/>
       <button class="btn" @click="addSkill">新增技能</button>
       <ul class="skill-list">
         <li v-for="(skill,index) in skills" :key="index">
@@ -52,6 +53,37 @@
         </article>
       </div>
     </section>
+    <section>
+        <button class="btn" @click="showCount = !showCount">按我！</button>
+        <div v-show="showCount">
+            <p>現在{{ count }}</p>
+            <button @click="increment">+</button>
+            <button @click="decrement">-</button>
+            <button @click="reset">reset</button>
+        </div>
+    </section>
+    <section>
+
+        <ScopedSlotList :items="skills">
+            <template #default ="{item,index}">
+                {{ index }} : {{ item }}
+            </template>
+        </ScopedSlotList>
+        <SlotCard>
+            <template #header>自訂標題</template>
+            <template #content>自訂123</template>
+            <template #footer>1234</template>
+            <p>6666</p>
+        </SlotCard>
+        <div v-if="loading">載入中...</div>
+        <div v-else-if="error">錯誤:{{ error }}</div>
+        <ul v-else>
+            <li v-for=" user in data" :key="user.id">
+                {{ user.name }}
+            </li>
+        </ul>
+    </section>
+  
   </main>
 
   <footer id="contact">
@@ -59,14 +91,76 @@
     <p>Email: eric@example.com</p>
     <p>GitHub: github.com/CheeeYun</p>
   </footer>
+
+        <button class="btn" @click="showModal=true">打開Modal</button>
+        <Teleport to="body">
+            <div v-if="showModal" class="modal">
+                <p>Modal內容111111123{{ skillsSummary }}</p>
+                <button @click="showModal=false">關閉</button>
+            </div>
+        </Teleport>
+
 </template>
+
 <script setup>
-const count = ref(0);
+import SlotCard from '~/components/SlotCard.vue'
+
+ const {count,increment,decrement,reset} = useCounter(10)
+ const {data,loading,error,fetchData} = useApi()
+// const count2 = ref(0);
+
+const user = reactive({name:'Eric',age:30})
+const state = reactive({count:0})
+const nameRef = toRef(user,'name')
+const {name,age} = toRefs(user);
+
+const countRef = toRef(state,'count')
+
+
+
+const showCount = ref(false);
+const showModal = ref(false);
 const skills = reactive(['HTML5 / CSS3','JavaScript','Vue.js / Nuxt.js','SCSS / SASS','Git'])
 const addSkill = ()=>{
-    skills.push('SCSS')
+    if(newSkills.value.trim()){
+    skills.push(newSkills.value);
+    newSkills.value = '';
+    }
 }
+const newSkills = ref('');
+const skillsSummary = computed(()=>{
+    return `你有${skills.length}個技能:${skills.join(',')}`
+})
 const removeSkill = (index)=>{
     skills.splice(index,1)
 }
+onMounted(()=>{
+    console.log('組建已掛載');
+    fetchData('https://jsonplaceholder.typicode.com/users')
+})
+onUnmounted(()=>{
+    console.log('組建已卸載');
+})
+onUpdated(()=>{
+    console.log('組建已更新');
+})
+watch(()=>[...skills],(newSkills,oldSkills)=>{
+    console.log(`skills更新了`,newSkills,oldSkills);
+})
+watchEffect(()=>{
+    console.log('count',count.value);
+    console.log('skills',skills.length);
+})
 </script>
+<style>
+    .modal{
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+</style>
